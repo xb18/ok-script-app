@@ -1,7 +1,5 @@
 import re
 
-from qfluentwidgets import FluentIcon
-
 from ok import og
 from src.tasks.MyBaseTask import MyBaseTask
 
@@ -12,7 +10,10 @@ class MyOneTimeTask(MyBaseTask):
         super().__init__(*args, **kwargs)
         self.name = "Configuration Demo Task"
         self.description = "Demonstrates every configuration widget for English to Chinese translation."
-        self.icon = FluentIcon.SYNC
+        gui_config = og.config.get("gui")
+        if not isinstance(gui_config, dict) or gui_config.get("type") != "web":
+            from qfluentwidgets import FluentIcon
+            self.icon = FluentIcon.SYNC
         self.default_config.update({
             "Drop Down Config": "Drop Down Value 1",
             "Boolean Config": True,

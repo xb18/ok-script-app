@@ -16,3 +16,7 @@ profiles:
     git_url: "https://github.com/ok-oldking/ok-script-app-update.git"
     main_script: "main.py"
     requirements: "requirements.txt"
+
+  - name: "Web"
+    main_script: "web_main.py"
+    requirements: "requirements-web.txt"
