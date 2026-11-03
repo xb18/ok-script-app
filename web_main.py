@@ -1,12 +1,14 @@
+"""Compatibility launcher for the desktop UI; ok-script 3 removed the web UI."""
+
+import warnings
+
 from ok import OK
 from src.config import config
 
 
 if __name__ == '__main__':
-    web_config = dict(config)
-    web_config.pop('my_app', None)
-    web_config['gui'] = {
-        'type': 'web',
-        'launch_mode': 'pywebview',
-    }
-    OK(web_config).start()
+    warnings.warn(
+        'ok-script 3 removed the web frontend; launching the desktop UI. Use main.py instead.',
+        FutureWarning,
+    )
+    OK(config).start()

@@ -1,7 +1,2 @@
-ok-script[web]==2.0.0b2
-OpenCC
-adbutils
-onnxocr-ppocrv5
-openvino
-opencv-python
-pynput
+# Compatibility alias: ok-script 3 uses the desktop Qt frontend.
+-r requirements.txt

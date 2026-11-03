@@ -1,112 +1,62 @@
-## ok-script-app
+# ok-script-app
 
 [English](README_en.md) | 中文
 
-ok-script-app 是一个基于 [ok-script](https://github.com/ok-oldking/ok-script) 的 Python 自动化项目模板。它提供了可直接运行的 GUI、任务示例、配置控件示例、OCR 示例、模板匹配示例、测试用例和打包配置，适合用来快速创建自己的 Windows 自动化脚本项目。
+ok-script-app 是一个基于 [ok-script](https://github.com/ok-oldking/ok-script) 的 Python 自动化项目模板，支持为 Windows 原生游戏、Android 模拟器和浏览器游戏创建带 GUI 的自动化应用。
 
-这个仓库不是某个具体游戏的自动化成品，而是 ok-script 应用的起步工程和功能演示。
+这个仓库提供任务示例、OCR、模板匹配、配置控件、测试、i18n、EXE 打包和更新发布配置。它是起步工程和功能演示，不是某个具体游戏的自动化成品。
 
-### 功能演示
+## 文档
 
-**API 列表与脚本录制**
+完整文档已整理为 MkDocs 网站源文件：
 
-![image_scripting](docs/images/image_scripting.png)
+- [文档首页](docs/index.md)
+- [快速开始](docs/getting-started.md)
+- [应用与运行目标配置](docs/configuration.md)
+- [任务开发](docs/tasks.md)
+- [打包与发布](docs/release.md)
+- [构建文档网站](docs/documentation.md)
+- [English documentation](docs/en/index.md)
 
-**多种截图与交互方式**
+## 快速预览
 
-![image_screenshot](docs/images/image_capture.png)
-
-**标注管理与模板匹配**
-
-![image_template](docs/images/image_template.png)
-![image_markup](docs/images/image_markup.png)
-
-## 主要内容
-
-- 可直接启动的 ok-script GUI 应用入口。
-- `MyOneTimeTask` 示例任务，演示常用任务 API 和配置控件。
-- 配置控件示例：下拉框、布尔值、整数、浮点数、字符串、多行文本、列表、多选、文件选择、文件夹选择、全局配置和按钮组。
-- OCR、相对区域识别和模板匹配示例。
-- `ConfigOption` 全局配置示例。
-- `TaskTestCase` 自动化测试示例。
-- i18n 翻译文件和 `.mo` 编译产物。
-- `pyappify.yml` 和 GitHub Actions 打包发布配置。
-
-## 快速开始
-
-本项目建议使用 Python 3.12。Windows 自动化通常需要管理员权限运行终端、PyCharm 或 VS Code。
-
-```bash
-pip install -r requirements.txt --upgrade
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+$PypiIndex = "https://pypi.org/simple/"
+python -m pip install --index-url $PypiIndex --upgrade pip
+python -m pip install --index-url $PypiIndex --no-deps --upgrade -r requirements.txt
 python main_debug.py
 ```
 
-运行普通模式：
+直接依赖统一维护在 `pyproject.toml`。`requirements.txt` 是 Qt profile 的锁定
+文件，使用 ok-script `3.0.0b3`，请勿直接编辑生成文件。
+ok-script 3 已移除 Web 界面；`requirements-web.txt`、`web` extra 和 Web 启动器
+保留为桌面应用的兼容入口。官方 PyPI 的 pip 索引地址
+必须包含 `/simple/`；`https://pypi.org/` 不是有效的包索引地址。
 
-```bash
-python main.py
+详细的仓库初始化、目标配置、首个任务和 tag 打包流程请阅读[快速开始](docs/getting-started.md)。
+
+## 构建文档网站
+
+```powershell
+python -m pip install --index-url https://pypi.org/simple/ -r requirements-docs.txt
+python -m mkdocs serve
 ```
 
-运行测试：
+访问 `http://127.0.0.1:8000/` 预览。生成静态 HTML：
 
-```bash
-python -m unittest tests.TestMain
+```powershell
+python -m mkdocs build --strict
 ```
 
-## 项目结构
-
-```text
-src/tasks              任务类示例
-src/config.py          ok-script 应用配置
-src/ui                 自定义 UI Tab 示例
-tests                  自动化测试用例
-assets                 模板匹配资源和 COCO 标注
-docs/images            README 使用的演示图片
-i18n                   翻译文件
-icons                  应用图标
-main.py                普通入口
-main_debug.py          Debug 入口
-pyappify.yml           打包配置
-deploy.txt             发布时同步到更新仓库的文件列表
-.github/workflows      自动化构建与发布流程
-```
-
-## 开发任务
-
-主要示例任务位于 `src/tasks/MyOneTimeTask.py`。你可以从这里开始：
-
-- 修改 `default_config` 增加任务配置默认值。
-- 修改 `config_type` 选择配置控件类型。
-- 在 `run()` 中编写自动化逻辑。
-- 使用 `self.ocr()` 做文字识别。
-- 使用 `self.find_one()` 或 `self.find_feature()` 做模板匹配。
-- 使用 `self.info_set()` 在 UI 中展示任务状态。
-- 使用 `self.log_info(..., notify=True)` 发送通知。
-
-启用自定义任务后，也可以在 GUI 中创建和编辑任务脚本。
-
-## 打包与发布
-
-仓库包含 GitHub Actions 配置。推送符合规则的 tag 后会触发构建：
-
-```text
-v*.*.*
-```
-
-构建流程会根据 `pyappify.yml` 打包应用，并按 `deploy.txt` 同步更新仓库需要的文件。
-
-## ok-script 文档
-
-- [游戏自动化入门](https://github.com/ok-oldking/ok-script/blob/master/docs/intro_to_automation/README.md)
-- [快速开始](https://github.com/ok-oldking/ok-script/blob/master/docs/quick_start/README.md)
-- [进阶使用](https://github.com/ok-oldking/ok-script/blob/master/docs/after_quick_start/README.md)
-- [API 文档](https://github.com/ok-oldking/ok-script/blob/master/docs/api_doc/README.md)
+输出位于 `site/`。`.github/workflows/docs.yml` 可将网站自动发布到 GitHub Pages，具体设置见[文档网站说明](docs/documentation.md)。
 
 ## 社区
 
 - 用户群：`1097603920`
 - 开发者群：`938132715`
-- Discord：https://discord.gg/vVyCatEBgA
+- [Discord](https://discord.gg/vVyCatEBgA)
 
 ## 致谢
 

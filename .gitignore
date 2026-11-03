@@ -5,6 +5,7 @@ working/
 update/
 tesseract
 models
+cache/
 fonts
 data2
 # Byte-compiled / optimized / DLL files
@@ -27,6 +28,7 @@ click_screenshots/
 test_scripts/
 screenshots/
 thread_dumps.txt
+site/
 # C extensions
 *.so
 *.bat

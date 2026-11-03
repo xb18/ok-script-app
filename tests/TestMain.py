@@ -1,16 +1,16 @@
 # Test case
 import unittest
 
-from PySide6.QtGui import QFontMetrics
-
 from src.config import config
 from ok.test.TaskTestCase import TaskTestCase
-from ok.gui.tasks.ConfigItemFactory import config_widget
-from ok.gui.tasks.LabelAndButtons import LabelAndButtons
-from ok.gui.tasks.LabelAndFileSelector import LabelAndFileSelector
-from ok.gui.tasks.ModifyListDialog import ModifyListDialog
-from ok.gui.tasks.ModifyListItem import ModifyListItem
-from qfluentwidgets import PushButton
+from ok.ui.qt.tasks.config_editors import (
+    ButtonsEditor,
+    FileSelectorEditor,
+    ListEditor,
+    config_editor,
+)
+from ok.ui.qt.tasks.ModifyListDialog import ModifyListDialog
+from ok.ui.qt.kit.buttons import Button
 
 from src.tasks.MyOneTimeTask import MyOneTimeTask
 
@@ -69,7 +69,7 @@ class TestMyOneTimeTask(TaskTestCase):
         )
 
     def test_folder_selector_config_uses_folder_selector_widget(self):
-        widget = config_widget(
+        widget = config_editor(
             self.task.config_type,
             self.task.config_description,
             self.task.config,
@@ -77,13 +77,13 @@ class TestMyOneTimeTask(TaskTestCase):
             self.task.config.get("Folder Selector Config"),
             self.task,
         )
-        self.assertIsInstance(widget, LabelAndFileSelector)
+        self.assertIsInstance(widget, FileSelectorEditor)
         self.assertEqual("folder", widget.selector_type)
         self.assertFalse(hasattr(widget, "line_edit"))
         self.assertEqual(str(self.task.config.get("Folder Selector Config") or ""), widget.value_label.text())
 
     def test_file_selector_config_uses_file_selector_widget(self):
-        widget = config_widget(
+        widget = config_editor(
             self.task.config_type,
             self.task.config_description,
             self.task.config,
@@ -91,14 +91,14 @@ class TestMyOneTimeTask(TaskTestCase):
             self.task.config.get("File Selector Config"),
             self.task,
         )
-        self.assertIsInstance(widget, LabelAndFileSelector)
+        self.assertIsInstance(widget, FileSelectorEditor)
         self.assertEqual("file", widget.selector_type)
         self.assertEqual("Python Files (*.py);;All Files (*)", widget.config_type["filter"])
         self.assertFalse(hasattr(widget, "line_edit"))
         self.assertEqual(str(self.task.config.get("File Selector Config") or ""), widget.value_label.text())
 
     def test_button_options_config_uses_multiple_buttons(self):
-        widget = config_widget(
+        widget = config_editor(
             self.task.config_type,
             self.task.config_description,
             self.task.config,
@@ -106,11 +106,11 @@ class TestMyOneTimeTask(TaskTestCase):
             self.task.config.get("Button Options Config"),
             self.task,
         )
-        self.assertIsInstance(widget, LabelAndButtons)
-        self.assertEqual(2, len(widget.findChildren(PushButton)))
+        self.assertIsInstance(widget, ButtonsEditor)
+        self.assertEqual(2, len(widget.findChildren(Button)))
 
     def test_options_available_uses_restricted_option_list_dialog(self):
-        widget = config_widget(
+        widget = config_editor(
             self.task.config_type,
             self.task.config_description,
             self.task.config,
@@ -118,7 +118,7 @@ class TestMyOneTimeTask(TaskTestCase):
             self.task.config.get("Drop Down Options Config"),
             self.task,
         )
-        self.assertIsInstance(widget, ModifyListItem)
+        self.assertIsInstance(widget, ListEditor)
         self.assertTrue(widget.allow_duplication)
 
         options = self.task.config_type["Drop Down Options Config"]["options_available"]
@@ -143,56 +143,8 @@ class TestMyOneTimeTask(TaskTestCase):
             ],
             result[0],
         )
-        widget.list_modified(["Available Drop Down Value 1", "Not Available"])
+        widget._list_modified(["Available Drop Down Value 1", "Not Available"])
         self.assertEqual(["Available Drop Down Value 1"], self.task.config["Drop Down Options Config"])
-
-    def test_string_config_input_uses_minimum_width_when_empty(self):
-        widget = config_widget(
-            self.task.config_type,
-            self.task.config_description,
-            self.task.config,
-            "String Config",
-            self.task.config.get("String Config"),
-            self.task,
-        )
-
-        widget.line_edit.setText("")
-        self.assertEqual(100, widget.line_edit.width())
-        self.assertEqual(100, widget.line_edit.minimumWidth())
-        widget.line_edit.setText("a")
-        self.assertEqual(100, widget.line_edit.width())
-        long_text = "String Value With Enough Content"
-        widget.line_edit.setText(long_text)
-        expected_width = (
-            QFontMetrics(widget.line_edit.font()).horizontalAdvance(long_text)
-            + widget.HORIZONTAL_PADDING
-        )
-        self.assertEqual(expected_width, widget.line_edit.width())
-        self.task.config["String Config"] = self.task.default_config["String Config"]
-
-    def test_text_edit_config_uses_minimum_width_when_empty(self):
-        widget = config_widget(
-            self.task.config_type,
-            self.task.config_description,
-            self.task.config,
-            "Text Edit Config",
-            self.task.config.get("Text Edit Config"),
-            self.task,
-        )
-
-        widget.text_edit.setText("")
-        self.assertEqual(200, widget.text_edit.width())
-        self.assertEqual(200, widget.text_edit.minimumWidth())
-        widget.text_edit.setText("a")
-        self.assertEqual(200, widget.text_edit.width())
-        long_line = "Text Edit Value With Enough Content To Need More Width"
-        widget.text_edit.setText(f"Short\n{long_line}")
-        expected_width = (
-            QFontMetrics(widget.text_edit.font()).horizontalAdvance(long_line)
-            + widget.HORIZONTAL_PADDING
-        )
-        self.assertEqual(expected_width, widget.text_edit.width())
-        self.task.config["Text Edit Config"] = self.task.default_config["Text Edit Config"]
 
     def test_run_shows_config_values(self):
         self.task.config.reset_to_default()

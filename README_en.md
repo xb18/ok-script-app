@@ -1,112 +1,63 @@
-## ok-script-app
+# ok-script-app
 
 English | [中文](README.md)
 
-ok-script-app is a Python automation project template built on [ok-script](https://github.com/ok-oldking/ok-script). It includes a runnable GUI app, task examples, configuration widget examples, OCR examples, template matching examples, tests, localization files, and packaging configuration.
+ok-script-app is a Python automation project template built on [ok-script](https://github.com/ok-oldking/ok-script). It supports GUI automation apps for native Windows games, Android emulators, and browser games.
 
-This repository is not a finished automation tool for a specific game. It is a starter project and feature demo for building your own ok-script application.
+The template includes task examples, OCR, template matching, configuration widgets, tests, i18n, EXE packaging, and update/release configuration. It is a starter project and feature demo, not a finished automation tool for a specific game.
 
-### Demo
+## Documentation
 
-**API list and script recording**
+The complete documentation is organized as an MkDocs site:
 
-![image_scripting](docs/images/image_scripting.png)
+- [Documentation home](docs/en/index.md)
+- [Quick start](docs/en/getting-started.md)
+- [App and runtime target configuration](docs/en/configuration.md)
+- [Task development](docs/en/tasks.md)
+- [Packaging and release](docs/en/release.md)
+- [Build the documentation site](docs/en/documentation.md)
+- [中文文档](docs/index.md)
 
-**Capture and interaction methods**
+## Quick Preview
 
-![image_screenshot](docs/images/image_capture.png)
-
-**Annotation management and template matching**
-
-![image_template](docs/images/image_template.png)
-![image_markup](docs/images/image_markup.png)
-
-## What Is Included
-
-- A runnable ok-script GUI application entry point.
-- `MyOneTimeTask`, a sample task that demonstrates common task APIs and config widgets.
-- Config widget examples: drop-down, boolean, integer, float, string, text edit, list, multi-selection, file selector, folder selector, global config, and button groups.
-- OCR, relative-region OCR, and template matching examples.
-- A `ConfigOption` global configuration example.
-- `TaskTestCase` automated test examples.
-- i18n `.po` files and compiled `.mo` files.
-- `pyappify.yml` and GitHub Actions packaging/release configuration.
-
-## Quick Start
-
-Python 3.12 is recommended. On Windows, automation projects often need the terminal, PyCharm, or VS Code to run as administrator.
-
-```bash
-pip install -r requirements.txt --upgrade
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+$PypiIndex = "https://pypi.org/simple/"
+python -m pip install --index-url $PypiIndex --upgrade pip
+python -m pip install --index-url $PypiIndex --no-deps --upgrade -r requirements.txt
 python main_debug.py
 ```
 
-Run normal mode:
+Direct dependencies are managed in `pyproject.toml`. `requirements.txt` is the
+compiled Qt profile for ok-script `3.0.0b3`; do not edit this generated lock
+directly. ok-script 3 removed the web frontend. `requirements-web.txt`, the
+`web` extra, and the web launchers remain aliases for the desktop app.
+The official PyPI index URL for pip
+must include `/simple/`; `https://pypi.org/` is not a valid package index URL.
 
-```bash
-python main.py
+See the [Quick start](docs/en/getting-started.md) for repository initialization, runtime target configuration, the first task, and tag-based packaging.
+
+## Build the Documentation Site
+
+```powershell
+python -m pip install --index-url https://pypi.org/simple/ -r requirements-docs.txt
+python -m mkdocs serve
 ```
 
-Run tests:
+Open `http://127.0.0.1:8000/` to preview the site. Build static HTML with:
 
-```bash
-python -m unittest tests.TestMain
+```powershell
+python -m mkdocs build --strict
 ```
 
-## Project Layout
-
-```text
-src/tasks              Sample task classes
-src/config.py          ok-script app configuration
-src/ui                 Custom UI tab example
-tests                  Automated tests
-assets                 Template matching assets and COCO annotations
-docs/images            Demo images used by the README
-i18n                   Localization files
-icons                  App icons
-main.py                Normal entry point
-main_debug.py          Debug entry point
-pyappify.yml           Packaging configuration
-deploy.txt             File list synced to the update repository during release
-.github/workflows      Build and release workflows
-```
-
-## Developing Tasks
-
-The main sample task is in `src/tasks/MyOneTimeTask.py`. Start there to:
-
-- Add default task settings in `default_config`.
-- Choose config widget types in `config_type`.
-- Write automation logic in `run()`.
-- Use `self.ocr()` for text recognition.
-- Use `self.find_one()` or `self.find_feature()` for template matching.
-- Use `self.info_set()` to show task state in the UI.
-- Use `self.log_info(..., notify=True)` to send notifications.
-
-With custom tasks enabled, you can also create and edit task scripts from the GUI.
-
-## Packaging And Release
-
-The repository includes GitHub Actions workflows. Pushing a matching tag triggers the build:
-
-```text
-v*.*.*
-```
-
-The build uses `pyappify.yml` to package the app and `deploy.txt` to decide which files are synced to the update repository.
-
-## ok-script Documentation
-
-- [Intro to game automation](https://github.com/ok-oldking/ok-script/blob/master/docs/intro_to_automation/README.md)
-- [Quick start](https://github.com/ok-oldking/ok-script/blob/master/docs/quick_start/README.md)
-- [After quick start](https://github.com/ok-oldking/ok-script/blob/master/docs/after_quick_start/README.md)
-- [API docs](https://github.com/ok-oldking/ok-script/blob/master/docs/api_doc/README.md)
+The output is written to `site/`. `.github/workflows/docs.yml` can publish it automatically to GitHub Pages; see the [documentation-site guide](docs/en/documentation.md) for setup.
 
 ## Community
 
 - QQ user group: `1097603920`
 - QQ developer group: `938132715`
-- Discord: https://discord.gg/vVyCatEBgA
+- [Discord](https://discord.gg/vVyCatEBgA)
 
 ## Credits
 

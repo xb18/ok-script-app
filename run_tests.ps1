@@ -1,16 +1,20 @@
-Get-ChildItem -Path ".\tests\*.py" | ForEach-Object {
-  Write-Host "Running tests in $($_.FullName)"
-  try {
-      # Run the Python unittest command
-      python -m unittest $_.FullName
+$ErrorActionPreference = 'Stop'
+$taskPython = if (Test-Path "$PSScriptRoot\.venv\Scripts\python.exe") {
+    "$PSScriptRoot\.venv\Scripts\python.exe"
+} else {
+    'python'
+}
+$env:PYTHONIOENCODING = 'utf-8'
 
-      # Check if the previous command succeeded
-      if ($LASTEXITCODE -ne 0) {
-          throw "Tests failed in $($_.FullName)"
-      }
-  } catch {
-      # Stop the loop and return the error
-      Write-Error $_
-      exit 1
-  }
+Push-Location $PSScriptRoot
+try {
+    Get-ChildItem -Path ".\tests\*.py" | ForEach-Object {
+        Write-Host "Running tests in $($_.FullName)"
+        & $taskPython -m unittest $_.FullName
+        if ($LASTEXITCODE -ne 0) {
+            throw "Tests failed in $($_.FullName)"
+        }
+    }
+} finally {
+    Pop-Location
 }

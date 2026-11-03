@@ -1,0 +1,18 @@
+[project]
+name = "ok-script-app"
+version = "0.0.0"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.optional-dependencies]
+# ok-script 3 provides the Qt UI through ok-pyside-minimal.
+qt = [
+    "ok-script[adb,default,ocr,qt]==3.0.0b3",
+    "openvino",
+    "opencv-python",
+]
+# Compatibility alias: the web frontend was removed in ok-script 3.
+web = ["ok-script-app[qt]"]
+docs = [
+    "mkdocs==1.6.1",
+]

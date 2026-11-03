@@ -1,14 +1,13 @@
 from PySide6.QtCore import QEvent
-from PySide6.QtWidgets import QPushButton
-from qfluentwidgets import BodyLabel, FluentIcon, PushButton, PrimaryPushButton
-
-from ok import Config
-from ok.gui.widget.CustomTab import CustomTab
+from ok import Config, Icon
+from ok.ui.qt.kit.buttons import Button
+from ok.ui.qt.kit.labels import Label
+from ok.ui.qt.widget.CustomTab import CustomTab
 from src.tasks.MyOneTimeTask import MyOneTimeTask
 
 
 class MyTab(CustomTab):
-#  可以使用https://github.com/zhiyiYo/PyQt-Fluent-Widgets 或PySide6 写自定义Tab
+#  可以使用 ok.ui.qt.kit 或 PySide6 写自定义Tab
 
     def __init__(self):
         super().__init__()
@@ -17,12 +16,12 @@ class MyTab(CustomTab):
             'config1': 0,
             'config2': "test_value"
         })
-        self.icon = FluentIcon.FLAG
+        self.icon = Icon.APPLICATION
 
-        self.label = BodyLabel("This is a custom Tab")
+        self.label = Label("This is a custom Tab")
         self.add_widget(self.label)
 
-        self.button = PrimaryPushButton("This is a button")
+        self.button = Button("This is a button", variant="primary")
         self.button.clicked.connect(self.button_clicked)
         self.add_widget(self.button)
 

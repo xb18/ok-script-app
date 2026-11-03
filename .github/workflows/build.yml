@@ -29,12 +29,12 @@ jobs:
           echo "action_state=yellow" >> $env:GITHUB_ENV
           echo "${{ env.action_state }}"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           lfs: true
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Set UTF-8 encoding
@@ -45,7 +45,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install --no-deps -r requirements.txt
 
       - name: inline_ok_requirements #把ok-script加入源码, 从requirements.txt中删除以提高升级更新速度
         run: |
@@ -70,9 +70,19 @@ jobs:
           gitignore_file: '.update_repo_gitignore'
           show_author: true #在更新日志中加入作者
 
+      - name: Set installer version
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $appVersion = $env:RELEASE_TAG -replace '^v', ''
+          "APP_VERSION=$appVersion" >> $env:GITHUB_ENV
+
       - name: Build with PyAppify Action
         id: build-app
         uses: ok-oldking/pyappify-action@master #使用pyappify打包exe
+        with:
+          add_version_name: true
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -83,8 +93,8 @@ jobs:
             ###  更新日志 ${{ steps.sync.outputs.start_tag }} -> ${{ steps.sync.outputs.end_tag }}:
               ${{ steps.sync.outputs.changes_with_asterisk }}          
             ### 下载包说明
-              * [ok-script-app-win32-China-setup.exe](https://github.com/ok-oldking/ok-script-app/releases/download/${{ github.ref_name }}/ok-script-app-win32-China-setup.exe) 完整安装包, 更新使用阿里云+腾讯CNB.
-              * [ok-script-app-win32-Global-setup.exe](https://github.com/ok-oldking/ok-script-app/releases/download/${{ github.ref_name }}/ok-script-app-win32-Global-setup.exe) full package with dependencies, using GitHub and PyPi as update source
+              * [ok-script-app-win32-China-setup-${{ env.APP_VERSION }}.exe](https://github.com/ok-oldking/ok-script-app/releases/download/${{ github.ref_name }}/ok-script-app-win32-China-setup-${{ env.APP_VERSION }}.exe) 完整安装包, 更新使用阿里云+腾讯CNB.
+              * [ok-script-app-win32-Global-setup-${{ env.APP_VERSION }}.exe](https://github.com/ok-oldking/ok-script-app/releases/download/${{ github.ref_name }}/ok-script-app-win32-Global-setup-${{ env.APP_VERSION }}.exe) full package with dependencies, using GitHub and PyPi as update source
             ### 如果无法下载或下载慢, 可以使用其他下载源
               * [Mirror酱下载渠道](https://mirrorchyan.com/zh/projects?rid=ok-script-app&source=ok-script-app-release), 国内网页直链, 下载需要购买CD-KEY, 已有Mirror酱CD-KEY可免费下载
               * [夸克网盘](https://pan.quark.cn/s/a1052cec4d13), 免费, 但需要注册并下载夸克网盘客户端

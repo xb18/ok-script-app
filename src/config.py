@@ -6,6 +6,15 @@ from ok import ConfigOption
 version = "dev"
 #不需要修改version, Github Action打包会自动修改
 
+gui_config = {
+    'type': 'qt',
+    'window_size': {
+        'width': 1200,
+        'height': 800,
+        'min_width': 600,
+        'min_height': 450,
+    },
+}
 key_config_option = ConfigOption('Game Hotkey Config', { #全局配置示例
     'Echo Key': 'q',
     'Liberation Key': 'r',
@@ -50,7 +59,7 @@ def make_bottom_right_black(frame): #可选. 某些游戏截图时遮挡UID使�
 config = {
     'custom_tasks':True, # enable creating and editing custom tasks
     'debug': False,  # Optional, default: False
-    'use_gui': True, # 目前只支持True
+    'gui': gui_config,
     'config_folder': 'configs', #最好不要修改
     'global_configs': [key_config_option],
     'screenshot_processor': make_bottom_right_black, # 在截图的时候对frame进行修改, 可选
@@ -75,17 +84,16 @@ config = {
         'force_no_hdr': False, #True=当用户开启AutoHDR时候禁止使用
         'require_bg': True # 要求使用后台截图
     },
-    'adb': {  # Windows游戏请填写此设置, mumu模拟器使用原生截图和input,速度极快. 其他模拟器和真机使用adb,截图速度较慢
+    'adb': {  # 模拟器或Android设备请填写此设置, mumu模拟器使用原生截图和input,速度极快. 其他模拟器和真机使用adb,截图速度较慢
         # optional, if set, will start the pacakge and ensure installed
         #'packages': ['com.abc.efg1', 'com.abc.efg1']
     },
+    # 'browser': {  # 浏览器游戏请填写此设置；windows、adb、browser 至少配置一个，也可以同时配置多个
+    #     'url': 'https://example.com/game',
+    #     'nick': 'Browser',
+    #     'resolution': (1280, 720),
+    # },
     'start_timeout': 120,  # default 60
-    'window_size': { #ok-script窗口大小
-        'width': 1200,
-        'height': 800,
-        'min_width': 600,
-        'min_height': 450,
-    },
     'supported_resolution': {
         'ratio': '16:9', #支持的游戏分辨率
         'min_size': (1280, 720), #支持的最低游戏分辨率
